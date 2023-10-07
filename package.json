@@ -1,0 +1,28 @@
+{
+  "name": "neurosity",
+  "version": "1.0.0",
+  "description": "To test neurosity SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "neurosity-test"
+  },
+  "keywords": [
+    "crown",
+    "neuronal",
+    "neurosity"
+  ],
+  "author": "Lucas Himelfarb",
+  "license": "ISC",
+  "dependencies": {
+    "@neurosity/sdk": "^6.5.9",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "standard": "^17.1.0"
+  }
+}
