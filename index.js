@@ -1,44 +1,97 @@
-const { Neurosity } = require('@neurosity/sdk')
-require('dotenv').config()
+import 'dotenv/config'
+import { Neurosity } from '@neurosity/sdk'
 
-const deviceId = process.env.DEVICE_ID || ''
-const email = process.env.EMAIL || ''
-const password = process.env.PASSWORD || ''
+let neurosity = null
 
-const verifyEnvs = (email, password, deviceId) => {
-  const invalidEnv = (env) => env === '' || env === 0
+const isEnvOk = (values = []) => {
+  if (!Array.isArray(values)) {
+    console.log('the parameter "values" should be an Array')
 
-  if (invalidEnv(email) || invalidEnv(password) || invalidEnv(deviceId)) {
-    console.error(
-      'Please verify deviceId, email and password are in .env file, quitting...'
-    )
-
-    process.exit(0)
+    return false
   }
+
+  return values.every((value) => value)
 }
 
-verifyEnvs(email, password, deviceId)
-console.log(`${email} attempting to authenticate to ${deviceId}`)
+const classifySignalSamples = (signalQualitySamples=[]) => {
+  const badSignals = Array(8).fill(0)
+  const goodSignals = Array(8).fill(0)
 
-const neurosity = new Neurosity({ deviceId })
+  for (let signalQualitySample of signalQualitySamples) {
+    signalQualitySample.forEach((electrodeSignal, electrodeIndex) => {
+      if (['great', 'good'].includes(electrodeSignal.status)) {
+        goodSignals[electrodeIndex]++
+      } else {
+        badSignals[electrodeIndex]++
+      }
+    })
+  }
 
-const main = async () => {
-  await neurosity.login({ email, password })
-    .catch((error) => {
-      console.log(error)
+  return [goodSignals, badSignals]
+}
+
+const getSignalQualitySamples = (samplesAmount=100) => {
+  const tenPercent = samplesAmount / 10
+
+  return new Promise(resolve => {
+    const qualitySignalSamples = []
+    const subscriber = neurosity.signalQuality().subscribe((signalQuality) => {
+      console.log(signalQuality);
+      if (qualitySignalSamples.length % tenPercent === 0) {
+        console.log(`${qualitySignalSamples.length}% signal samples obtained...\n`)
+      }
+
+      if (qualitySignalSamples.length < samplesAmount) {
+        qualitySignalSamples.push(signalQuality)
+      } else {
+        subscriber.unsubscribe();
+        resolve(qualitySignalSamples)
+      }
+    })
+  })
+}
+
+async function main () {
+  try {
+    const _isEnvOk = isEnvOk([
+      process.env.EMAIL,
+      process.env.PASSWORD,
+      process.env.DEVICE_ID
+    ])
+
+    if (!_isEnvOk) throw new Error('isEnvOk(): false')
+
+    neurosity = new Neurosity({
+      timesync: true,
+      deviceId: process.env.DEVICE_ID
     })
 
-  console.log('Logged in')
+    console.log('login into Neurosity Developer Console...\n')
+    await neurosity.login({
+      email: process.env.EMAIL,
+      password: process.env.PASSWORD
+    })
+    console.log('login success...\n')
 
-  // neurosity.calm().subscribe((calm) => {
-  //   if (calm.probability > 0.3) {
-  //     console.log('probability > 0.3!')
-  //   }
-  // })
+    console.log('Getting signal quality samples...')
+    const signalQualitySamples = await getSignalQualitySamples()
+    console.log('Signal quality samples obtained...')
 
-  neurosity.kinesis('leftArm').subscribe((intent) => {
-    console.log('leftArm!', JSON.stringify(intent))
-  })
+    console.log('Classifying signal samples...')
+    const [
+      goodSignalsPerElectrode,
+      badSignalsPerElectrode
+    ] = classifySignalSamples(signalQualitySamples)
+    console.log('Quality signals samples classified...')
+
+    console.log(`
+      Good signals samples: ${goodSignalsPerElectrode}\n
+      Bad signals samples: ${badSignalsPerElectrode} 
+    `)
+
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 main()

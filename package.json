@@ -1,6 +1,7 @@
 {
   "name": "neurosity",
   "version": "1.0.0",
+  "type": "module",
   "description": "To test neurosity SDK",
   "main": "index.js",
   "scripts": {
