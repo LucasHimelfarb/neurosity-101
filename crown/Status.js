@@ -3,9 +3,9 @@ export async function checkDeviceStatus (neurosity = {}, eventsAmount = 50) {
     let eventsCounter = 0
 
     const subscriber = neurosity.status().subscribe(({
-      state,
-      battery,
-      sleepMode
+      state = '',
+      battery = 0,
+      sleepMode = false
     }) => {
       const isActive = !sleepMode
       const isBatteryOk = battery > 25

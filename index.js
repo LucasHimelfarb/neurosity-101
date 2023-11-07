@@ -1,8 +1,7 @@
 import 'dotenv/config'
 import { Neurosity } from '@neurosity/sdk'
 
-import { checkDeviceStatus } from './crown/Status.js'
-import { checkSignalQuality } from './crown/Signal.js'
+import { checkDeviceStatus, checkSignalQuality } from './crown/index.js'
 
 let neurosity = null
 
