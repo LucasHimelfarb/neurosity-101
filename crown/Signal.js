@@ -18,19 +18,21 @@ function getSignalQualitySamples (neurosity = {}, samplesAmount = 100) {
 
   return new Promise(resolve => {
     const qualitySignalSamples = []
-    const subscriber = neurosity.signalQuality().subscribe((signalQuality) => {
-      if (qualitySignalSamples.length % tenPercent === 0) {
-        console.log(`${qualitySignalSamples.length}% signal samples obtained...\n`)
-      }
+    const subscriber = neurosity
+      .signalQuality()
+      .subscribe((signalQuality) => {
+        if (qualitySignalSamples.length % tenPercent === 0) {
+          console.log(`${qualitySignalSamples.length}% signal samples obtained...\n`)
+        }
 
-      if (qualitySignalSamples.length < samplesAmount) {
-        qualitySignalSamples.push(signalQuality)
-      } else {
-        subscriber.unsubscribe()
-        console.log('Getting signal quality samples...')
-        resolve(qualitySignalSamples)
-      }
-    })
+        if (qualitySignalSamples.length < samplesAmount) {
+          qualitySignalSamples.push(signalQuality)
+        } else {
+          subscriber.unsubscribe()
+          console.log('Getting signal quality samples completed...')
+          resolve(qualitySignalSamples)
+        }
+      })
   })
 }
 
