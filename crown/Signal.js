@@ -29,7 +29,6 @@ function getSignalQualitySamples (neurosity = {}, samplesAmount = 100) {
           console.log(`${percentCollected}% signal samples obtained...`)
         }
 
-        console.log('mira maestrooo: ', qualitySignalSamplesLength, samplesAmount)
         if (qualitySignalSamplesLength < samplesAmount) {
           qualitySignalSamples.push(signalQuality)
         } else {
