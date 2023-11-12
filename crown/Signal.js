@@ -1,5 +1,5 @@
 export async function checkSignalQuality (neurosity = {}) {
-  const signalQualitySamples = await getSignalQualitySamples(neurosity)
+  const signalQualitySamples = await getSignalQualitySamples(neurosity, 200)
 
   const [
     goodSignalsPerElectrode,
@@ -14,18 +14,23 @@ export async function checkSignalQuality (neurosity = {}) {
 
 function getSignalQualitySamples (neurosity = {}, samplesAmount = 100) {
   console.log('Getting signal quality samples...')
-  const tenPercent = samplesAmount / 10
+  const tenPercent = Math.floor(samplesAmount * 0.1)
 
   return new Promise(resolve => {
     const qualitySignalSamples = []
+
     const subscriber = neurosity
       .signalQuality()
       .subscribe((signalQuality) => {
-        if (qualitySignalSamples.length % tenPercent === 0) {
-          console.log(`${qualitySignalSamples.length}% signal samples obtained...\n`)
+        const qualitySignalSamplesLength = qualitySignalSamples.length
+
+        if (qualitySignalSamplesLength % tenPercent === 0) {
+          const percentCollected = (qualitySignalSamplesLength / samplesAmount) * 100
+          console.log(`${percentCollected}% signal samples obtained...`)
         }
 
-        if (qualitySignalSamples.length < samplesAmount) {
+        console.log('mira maestrooo: ', qualitySignalSamplesLength, samplesAmount)
+        if (qualitySignalSamplesLength < samplesAmount) {
           qualitySignalSamples.push(signalQuality)
         } else {
           subscriber.unsubscribe()
