@@ -1,4 +1,4 @@
-export async function checkSignalQuality (neurosity = {}) {
+async function checkSignalQuality (neurosity = {}) {
   const signalQualitySamples = await getSignalQualitySamples(neurosity, 200)
 
   const [
@@ -59,3 +59,5 @@ function classifySignalSamples (signalQualitySamples = []) {
   console.log('Quality signals samples classified...')
   return [goodSignals, badSignals]
 }
+
+module.exports = checkSignalQuality

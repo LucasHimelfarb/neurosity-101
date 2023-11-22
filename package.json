@@ -1,11 +1,10 @@
 {
   "name": "neurosity",
   "version": "1.0.0",
-  "type": "module",
   "description": "To test neurosity SDK",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
     "start": "node index.js"
   },
   "repository": {
@@ -24,6 +23,7 @@
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "standard": "^17.1.0"
   }
 }

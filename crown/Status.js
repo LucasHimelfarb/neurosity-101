@@ -1,4 +1,4 @@
-export async function checkDeviceStatus (neurosity = {}, eventsAmount = 50) {
+async function checkDeviceStatus (neurosity = {}, eventsAmount = 50) {
   return new Promise((resolve, reject) => {
     let eventsCounter = 0
 
@@ -22,9 +22,9 @@ export async function checkDeviceStatus (neurosity = {}, eventsAmount = 50) {
         if (eventsCounter >= eventsAmount) {
           const error = `
             checkDeviceStatus() Error:\n
-            is device online: ${isOnline}\n
-            is battery ok: ${isBatteryOk}\n
-            is device active: ${isActive}\n
+            - Is device online: ${isOnline}\n
+            - Is battery ok: ${isBatteryOk}\n
+            - Is device active: ${isActive}\n
           `
           reject(new Error(error))
         }
@@ -32,3 +32,5 @@ export async function checkDeviceStatus (neurosity = {}, eventsAmount = 50) {
     })
   })
 }
+
+module.exports = checkDeviceStatus

@@ -1,7 +1,7 @@
-import 'dotenv/config'
-import { Neurosity } from '@neurosity/sdk'
+require('dotenv/config')
+const { Neurosity } = require('@neurosity/sdk')
 
-import { checkDeviceStatus, checkSignalQuality } from './crown/index.js'
+const { checkSignalQuality, checkDeviceStatus } = require('./crown/index.js')
 
 let neurosity = null
 
@@ -15,10 +15,9 @@ async function main () {
     })
 
     startProcessTerminationListeners()
-
-    await signInNeurosity()
-    await checkDeviceStatus(neurosity)
-    await checkSignalQuality(neurosity)
+    // await signInNeurosity()
+    // await checkDeviceStatus(neurosity)
+    // await checkSignalQuality(neurosity)
   } catch (error) {
     console.log(error)
   }
@@ -26,11 +25,17 @@ async function main () {
 
 async function signInNeurosity () {
   console.log('login into Neurosity Developer Console...\n')
-  await neurosity.login({
+
+  const { user } = await neurosity.login({
     email: process.env.EMAIL,
     password: process.env.PASSWORD
   })
-  console.log('login success...\n')
+
+  if (user && user.refreshToken) {
+    console.log('login success...\n')
+
+    return true
+  }
 }
 
 async function checkEnvironmentVariables () {

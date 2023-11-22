@@ -1,2 +1,7 @@
-export * from './Signal.js'
-export * from './Status.js'
+const checkDeviceStatus = require('./status.js')
+const checkSignalQuality = require('./signal.js')
+
+module.exports = {
+  checkDeviceStatus,
+  checkSignalQuality
+}
